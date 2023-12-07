@@ -1,12 +1,23 @@
 steps:
   - name: "gcr.io/cloud-builders/python"
-    args: ["pip", "install", "-r", "requirements.txt", "python", "train_deploy.py"]
+  - args:
+      - "run"
+      - "pip"
+      - "install"
+      - "-r"
+      - "requirements.txt"
+      - "python"
+      - "train_deploy.py"
+
+  # - name: "gcr.io/cloud-builders/python"
+  #   args: ["pip", "install", "-r", "requirements.txt", "python", "train_deploy.py"]
+
   # - name: python
-  #   entrypoint: python3
+  #   entrypoint: python
   #   args: ["-m", "pip", "install", "--upgrade", "pip"]
 
   # - name: python
-  #   entrypoint: python3
+  #   entrypoint: python
   #   args: ["-m", "pip", "install", "-r", "requirements.txt"]
 
   # - name: python
@@ -14,7 +25,7 @@ steps:
   #   args: ["-m", "pip", "list"]
 
   # - name: python
-  #   entrypoint: python3
+  #   entrypoint: python
   #   args: ["train_deploy.py"]
 
 options:

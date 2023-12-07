@@ -10,6 +10,10 @@ import pytz
 import json
 import datetime
 
+def call_status_func():
+   print("Invoked test function!!!")
+   return True
+
 def get_latest_dataset(bucket_name):
    
     # Initialize the Google Cloud Storage client
@@ -45,8 +49,12 @@ def get_latest_dataset(bucket_name):
     else:
       return None
 
-file = get_latest_dataset("output_buk")
-print(file)
+# file = get_latest_dataset("output_buk")
+# print(file)
+
+if __name__ == "__main__":
+   _status = call_status_func()
+   print(_status)
 
 
 # def load_meta_data():
