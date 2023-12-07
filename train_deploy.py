@@ -11,6 +11,8 @@ import json
 import datetime
 
 project_id = "tensile-nebula-406509"
+print(project_id)
+
 
 def get_latest_dataset(bucket_name):
    
