@@ -104,7 +104,7 @@ def email(_from_email, _to_emails, mail_api_key, message_data):
         return response
  
     except HTTPError as e:
-        return e.message
+        return e
 
 def get_latest_dataset(bucket_name):
    
@@ -204,10 +204,10 @@ def hello_gcs1(project_id, region, endpoint_id, output_buk, opt, model_display_n
 
     latest_file_info = get_latest_dataset(bucket_name)
    
-    if latest_file_info['file_name'] != None:
-        email_dict['file_upload']['status'] = "Successs"
-        email_dict['file_upload']['message'] = f"File uploaded to the bucket {output_buk} with the file name {latest_file_info['file_name']}"
-        mail_obj = email(from_address, to_address, m_api_key, email_dict)
+    # if latest_file_info['file_name'] != None:
+    #     email_dict['file_upload']['status'] = "Successs"
+    #     email_dict['file_upload']['message'] = f"File uploaded to the bucket {output_buk} with the file name {latest_file_info['file_name']}"
+    #     mail_obj = email(from_address, to_address, m_api_key, email_dict)
  
     file_name = f"gs://{bucket_name}/{latest_file_info['file_name']}"
 
@@ -218,23 +218,23 @@ def hello_gcs1(project_id, region, endpoint_id, output_buk, opt, model_display_n
 
     print('Dataset ID: \t', dataset_id)
 
-    if dataset_id != None:
-        email_dict['dataset']['status'] = "Success"
-        email_dict['dataset']['message'] = f"Dataset created successfully with the Dataset ID {dataset_id}"
-        mail_obj = email(from_address, to_address, m_api_key, email_dict)
+    # if dataset_id != None:
+    #     email_dict['dataset']['status'] = "Success"
+    #     email_dict['dataset']['message'] = f"Dataset created successfully with the Dataset ID {dataset_id}"
+    #     mail_obj = email(from_address, to_address, m_api_key, email_dict)
  
     model, status = training_job("mlops-training-pipeline", "classification", dataset, "salary", True, "mlops-model-1")
 
     print(status)
-    if status == "successful":
-        email_dict['training_job']['status'] = "Successs"
-        email_dict['training_job']['message'] = f"Training Job completed successfully"
-        mail_obj = email(from_address, to_address, m_api_key, email_dict)
-    elif status == "error":
-        email_dict['training_job']['status'] = "Failure"
-        email_dict['training_job']['message'] = f"Training job failed, please check logs"
-        mail_obj = email(from_address, to_address, m_api_key, email_dict)
-        
+    # if status == "successful":
+    #     email_dict['training_job']['status'] = "Successs"
+    #     email_dict['training_job']['message'] = f"Training Job completed successfully"
+    #     mail_obj = email(from_address, to_address, m_api_key, email_dict)
+    # elif status == "error":
+    #     email_dict['training_job']['status'] = "Failure"
+    #     email_dict['training_job']['message'] = f"Training job failed, please check logs"
+    #     mail_obj = email(from_address, to_address, m_api_key, email_dict)
+
 if __name__ == "__main__":
     meta_data = load_meta_data()
 
@@ -256,94 +256,3 @@ if __name__ == "__main__":
 
 
 
-
-
-
-
-
-
-# # def expose_model_as_endpoint(endpoint_id, _model, deployed_display_name, m_type):
-# #     #endpoint = aiplatform.Endpoint.create(display_name='mlops-model-1')
-# #     endpoint = get_endpoint(endpoint_id)
-# #     print(f"Endpoint is {endpoint}")
-# #     deployed_model = endpoint.deploy(
-# #             model=_model,
-# #             deployed_model_display_name= deployed_display_name,
-# #             traffic_percentage=100,
-# #             machine_type=m_type
-# #         )
-# #     print("Model deployed")
-# #     # Endpoint URL for predictions
-# #     endpoint_url = endpoint.predict
-# #     return endpoint_url
-
-# def hello_gcs1(project_id, region, endpoint_id, output_buk, opt, model_display_name, m_type, from_address, to_address, m_api_key):
-    
-#     email_dict = {
-#         "file_upload" : {"status": None, "message": None},
-#         "dataset": {"status": None, "message": None},
-#         "training_job": {"status": None, "message": None},
-#         "model_deploy": {"status": None, "message": None},
-#         "expose_endpoint": {"status": None, "message": None},
-#         "endpoint_url": {"status": None, "message": None}
-#     }
-    
-#     PROJECT_ID = project_id
-#     REGION = region
-
-#     endpoint_id = endpoint_id
-#     bucket_name = output_buk
-
-#     latest_file_info = get_latest_dataset(bucket_name)
-   
-#     if latest_file_info['file_name'] != None:
-#         email_dict['file_upload']['status'] = "Successs"
-#         email_dict['file_upload']['message'] = f"File uploaded to the bucket {output_buk} with the file name {latest_file_info['file_name']}"
-#         mail_obj = email(from_address, to_address, m_api_key, email_dict)
- 
-#     file_name = f"gs://{bucket_name}/{latest_file_info['file_name']}"
-
-#     aiplatform.init(project=PROJECT_ID, location=REGION)
-    
-#     dataset_id = get_dataset_id(file_name)
-#     dataset = aiplatform.TabularDataset(dataset_id)
-
-#     print('Dataset ID: \t', dataset_id)
-
-#     if dataset_id != None:
-#         email_dict['dataset']['status'] = "Success"
-#         email_dict['dataset']['message'] = f"Dataset created successfully with the Dataset ID {dataset_id}"
-#         mail_obj = email(from_address, to_address, m_api_key, email_dict)
- 
-#     model, status = training_job("mlops-training-pipeline", "classification", dataset, "salary", True, "mlops-model-1")
-
-#     print(status)
-#     if status == "successful":
-#         email_dict['training_job']['status'] = "Successs"
-#         email_dict['training_job']['message'] = f"Training Job completed successfully"
-#         mail_obj = email(from_address, to_address, m_api_key, email_dict)
-#     elif status == "error":
-#         email_dict['training_job']['status'] = "Failure"
-#         email_dict['training_job']['message'] = f"Training job failed, please check logs"
-#         mail_obj = email(from_address, to_address, m_api_key, email_dict)
-
-# def main():
-   
-#     # loading the meta_data
-#     meta_data = load_meta_data()
-
-#     project_id = meta_data.get('project_id')
-# #    region = meta_data.get('region')
-#     endpoint_id = meta_data.get('endpoint_id')
-#     output_buk = meta_data.get('bucket_name')
-#     opt = meta_data.get('optimization_prediction_type')
-#     model_display_name = meta_data.get('model_display_name')
-#     m_type = meta_data.get('machine_type')
-#     from_email = meta_data.get('from_email')
-#     to_emails = meta_data.get('to_emails')
-#     mail_api_key = meta_data.get('mail_api_key')
- 
-#     model_deployment_data = hello_gcs1(project_id, region, endpoint_id, output_buk, opt, model_display_name, m_type, from_email, to_emails, mail_api_key)
-#     print('Model Deployment Data: \t', model_deployment_data)
-
-# run = main()
