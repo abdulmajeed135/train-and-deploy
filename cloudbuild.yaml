@@ -1,19 +1,25 @@
 steps:
-  - name: python
-    entrypoint: python3
-    args: ["-m", "pip", "install", "--upgrade", "pip"]
+  - name: "python:3.10"
+    args: ["pip", "install", "-r", "requirements.txt"]
 
-  - name: python
-    entrypoint: python3
-    args: ["-m", "pip", "install", "-r", "requirements.txt"]
+  - name: "python:3.10"
+    args: ["python", "train_deploy.py"]
 
-  - name: python
-    entrypoint: python3
-    args: ["-m", "pip", "list"]
+  # - name: python
+  #   entrypoint: python3
+  #   args: ["-m", "pip", "install", "--upgrade", "pip"]
 
-  - name: python
-    entrypoint: python3
-    args: ["train_deploy.py"]
+  # - name: python
+  #   entrypoint: python3
+  #   args: ["-m", "pip", "install", "-r", "requirements.txt"]
+
+  # - name: python
+  #   entrypoint: python3
+  #   args: ["-m", "pip", "list"]
+
+  # - name: python
+  #   entrypoint: python3
+  #   args: ["train_deploy.py"]
 
 options:
   logging: CLOUD_LOGGING_ONLY
