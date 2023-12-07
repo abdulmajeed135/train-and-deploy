@@ -1,9 +1,7 @@
 steps:
-  - name: "python:3.10"
-    args: ["pip", "install", "-r", "requirements.txt"]
-
-  - name: "python:3.10"
-    args: ["python", "train_deploy.py"]
+  - name: "gcr.io/$PROJECT_ID/python-builder"
+    entrypoint: "/bin/bash"
+    args: ["-c", "pip install -r requirements.txt && python train_deploy.py"]
 
   # - name: python
   #   entrypoint: python3
