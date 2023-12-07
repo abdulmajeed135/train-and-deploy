@@ -1,11 +1,7 @@
 steps:
-  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
-    id: attach-date
-    args:
-      - bash
-      - -c
-      - |
-        pip install requirements.txt
+   - name: python
+      entrypoint: python
+      args: ['-m', 'pip', 'install', 'requirements.txt']
   
   - name: python
     entrypoint: python
