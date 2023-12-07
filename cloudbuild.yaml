@@ -1,10 +1,7 @@
 steps:
   - name: gcr.io/google.com/cloudsdktool/cloud-sdk
-    id: attach-date
-    args:
-      - bash
-      - -c
-      - |
-        python train_deploy.py
+    entrypoint: "python"
+    args: ["train_deploy.py"]
+
 options:
   logging: CLOUD_LOGGING_ONLY
