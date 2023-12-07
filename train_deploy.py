@@ -11,15 +11,20 @@ import json
 import datetime
 
 project_id = "tensile-nebula-406509"
+credentials_file = "tensile-nebula-406509-8fd0cc70c363.json"
 
 def call_status_func():
    print("Invoked test function!!!")
    return True
 
 def get_latest_dataset(bucket_name):
-   
+    
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = 'tensile-nebula-406509-8fd0cc70c363.json'
+
     # Initialize the Google Cloud Storage client
     client = storage.Client(project=project_id)
+    print(client)
+
     # Get the bucket
     bucket = client.get_bucket(bucket_name)
  
