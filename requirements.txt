@@ -1,10 +1,11 @@
 sendgrid
+pytz
 python_http_client
 pandas
-google-cloud-storage
-google-cloud-aiplatform
-pytz
 google
 google-api-python-client
+google-api-core
 google-cloud
 google-cloud-vision
+google-cloud-storage
+google-cloud-aiplatform
