@@ -1,15 +1,15 @@
 steps:
   - name: python
     entrypoint: python
-    args: ["pip", "install", "--upgrade", "pip"]
+    args: ["-m", "pip", "install", "--upgrade", "pip"]
 
   - name: python
     entrypoint: python
-    args: ["pip", "install", "-r", "requirements.txt"]
+    args: ["-m", "pip", "install", "-r", "requirements.txt"]
 
   - name: python
     entrypoint: python
-    args: ["pip", "list"]
+    args: ["-m", "pip", "list"]
 
   - name: python
     entrypoint: python
