@@ -1,8 +1,6 @@
 steps:
-  - name: "gcr.io/$PROJECT_ID/python-builder"
-    entrypoint: "/bin/bash"
-    args: ["-c", "pip install -r requirements.txt && python train_deploy.py"]
-
+  - name: "gcr.io/cloud-builders/python"
+    args: ["pip", "install", "-r", "requirements.txt", "python", "app.py"]
   # - name: python
   #   entrypoint: python3
   #   args: ["-m", "pip", "install", "--upgrade", "pip"]
