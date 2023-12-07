@@ -51,8 +51,9 @@ def get_latest_dataset(bucket_name):
 
 
 if __name__ == "__main__":
-    latest_file = get_latest_dataset("output_buk")
-    print(latest_file)
+    print('hello')
+    # latest_file = get_latest_dataset("output_buk")
+    # print(latest_file)
 
 # def load_meta_data():
 #     with open('./meta_data.json', 'r') as f:
