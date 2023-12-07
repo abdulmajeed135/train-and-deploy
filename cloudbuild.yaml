@@ -1,7 +1,7 @@
 steps:
   - name: python
     entrypoint: python
-    args: ["-m", "pip", "install", "requirements.txt"]
+    args: ["-m", "pip", "install", "-r", "requirements.txt"]
 
   - name: python
     entrypoint: python
