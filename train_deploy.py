@@ -10,11 +10,12 @@ import pytz
 import json
 import datetime
 
+project_id = "tensile-nebula-406509"
 
 def get_latest_dataset(bucket_name):
    
     # Initialize the Google Cloud Storage client
-    client = storage.Client()
+    client = storage.Client(project=project_id)
     # Get the bucket
     bucket = client.get_bucket(bucket_name)
  
