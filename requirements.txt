@@ -1,0 +1,6 @@
+sendgrid
+python_http_client
+pandas
+google-cloud-storage
+google-cloud-aiplatform
+pytz
