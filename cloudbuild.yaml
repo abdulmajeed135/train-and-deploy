@@ -1,18 +1,18 @@
 steps:
   - name: python
-    entrypoint: python
+    entrypoint: python3
     args: ["-m", "pip", "install", "--upgrade", "pip"]
 
   - name: python
-    entrypoint: python
+    entrypoint: python3
     args: ["-m", "pip", "install", "-r", "requirements.txt"]
 
   - name: python
-    entrypoint: python
+    entrypoint: python3
     args: ["-m", "pip", "list"]
 
   - name: python
-    entrypoint: python
+    entrypoint: python3
     args: ["train_deploy.py"]
 
 options:
