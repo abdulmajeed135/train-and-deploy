@@ -1,6 +1,6 @@
 steps:
-  - name: gcr.io/google.com/cloudsdktool/cloud-sdk
-    entrypoint: "python"
+  - name: python
+    entrypoint: python
     args: ["train_deploy.py"]
 
 options:
