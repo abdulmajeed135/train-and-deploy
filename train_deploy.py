@@ -10,6 +10,8 @@ import pytz
 import json
 import datetime
 
+project_id = "tensile-nebula-406509"
+
 def call_status_func():
    print("Invoked test function!!!")
    return True
@@ -17,7 +19,7 @@ def call_status_func():
 def get_latest_dataset(bucket_name):
    
     # Initialize the Google Cloud Storage client
-    client = storage.Client()
+    client = storage.Client(project=project_id)
     # Get the bucket
     bucket = client.get_bucket(bucket_name)
  
@@ -52,8 +54,8 @@ def get_latest_dataset(bucket_name):
 
 if __name__ == "__main__":
     print('hello')
-    # latest_file = get_latest_dataset("output_buk")
-    # print(latest_file)
+    latest_file = get_latest_dataset("output_buk")
+    print(latest_file)
 
 # def load_meta_data():
 #     with open('./meta_data.json', 'r') as f:
