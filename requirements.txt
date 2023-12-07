@@ -1,9 +1,9 @@
+google-api-python-client
 sendgrid
 pytz
 python_http_client
 pandas
 google
-google-api-python-client
 google-api-core
 google-cloud
 google-cloud-vision
