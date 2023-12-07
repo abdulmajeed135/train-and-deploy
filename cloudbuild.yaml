@@ -6,3 +6,5 @@ steps:
       - -c
       - |
         python train_deploy.py
+options:
+  logging: CLOUD_LOGGING_ONLY
