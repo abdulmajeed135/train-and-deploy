@@ -1,12 +1,13 @@
-google-api-python-client
 sendgrid
 pytz
-python_http_client
 pandas
 google
-google-api-core
 google-cloud
+google-api-core
+python_http_client
 google-cloud-vision
 google-cloud-storage
-google-cloud-aiplatform
 google-cloud-translate
+google-cloud-aiplatform
+google-api-python-client
+google-cloud-secret-manager

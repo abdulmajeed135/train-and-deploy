@@ -1,14 +1,17 @@
-import google
-from google.cloud import storage
-from google.cloud import aiplatform
-from sendgrid import SendGridAPIClient
-from sendgrid.helpers.mail import Mail, Email
-from python_http_client.exceptions import HTTPError
 import os
 import pandas as pd
 import pytz
 import json
 import datetime
+import google
+from google.cloud import storage
+from google.cloud import aiplatform
+from google.cloud import secretmanager
+from googleapiclient.discovery import build
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail, Email
+from python_http_client.exceptions import HTTPError
+
 
 credentials_file = "tensile-nebula-406509-8fd0cc70c363.json"
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials_file
@@ -33,6 +36,7 @@ def get_latest_dataset(bucket_name):
     # Initialize variables to track the latest modified time and object
     latest_modified_time = None
     latest_modified_blob = None
+
     # Find the latest modified file
     for blob in blobs:
         # Convert last modified time to IST
@@ -52,11 +56,7 @@ def get_latest_dataset(bucket_name):
       }
     else:
       return None
-    
-def load_meta_data():
-    with open('./meta_data.json', 'r') as f:
-        meta_data = json.load(f)
-    return meta_data
+
 
 def email(_from_email, _to_emails, mail_api_key, message_data):
     api_key = mail_api_key
@@ -89,6 +89,24 @@ def email(_from_email, _to_emails, mail_api_key, message_data):
                         <tr> \
                             <td> Message </td> \
                             <td> {message_data.get('training_job').get('message')} </td> \
+                        </tr> \
+                        <tr> \
+                            <td rowspan='2'> Deployment </td> \
+                            <td> Status </td> \
+                            <td> {message_data.get('model_deploy').get('status')} </td> \
+                        </tr> \
+                        <tr> \
+                            <td> Message </td> \
+                            <td> {message_data.get('model_deploy').get('message')} </td> \
+                        </tr> \
+                        <tr> \
+                            <td rowspan='2'> Endpoint URL </td> \
+                            <td> Status </td> \
+                            <td> {message_data.get('endpoint_url').get('status')} </td> \
+                        </tr> \
+                        <tr> \
+                            <td> Message </td> \
+                            <td> {message_data.get('endpoint_url').get('message')} </td> \
                         </tr> \
                     </table>"
     # create a message to be sent
@@ -183,24 +201,42 @@ def training_job(display_name, opt, dataset, target_column, des, model_name):
         error = f"Error during training job: {e}"
         return error, "error"
 
-    return model
+def get_exposing_url(endpoint_id, endpoint_project_id, region):
+    # call this funciton after deployment by passing two variables endpoint_id and region
+
+    url_string = f"https://{region}-aiplatform.googleapis.com/v1/projects/{endpoint_project_id}/locations/{region}/endpoints/{endpoint_id}:predict"
+    return url_string
 
 def get_endpoint(endpoint_id):
+   ENDPOINT_PROJECT_ID="975642425545"
+   url_string = None
    endpoints = aiplatform.Endpoint.list() 
    for i in range(0, len(endpoints)):
      if endpoints[i].name == endpoint_id:
         print(f"Endpoint ID: {endpoints[i].name}")
         endpoint = aiplatform.Endpoint.list()[i]
+
         return endpoint
 
-def hello_gcs1(project_id, region, endpoint_id, output_buk, opt, model_display_name, m_type, from_address, to_address, m_api_key):
+def get_secret_values(secret_name):
+    client = secretmanager.SecretManagerServiceClient()
+
+    values = f"projects/tensile-nebula-406509/secrets/{secret_name}/versions/latest"
+
+    response = client.access_secret_version(request={"name": values})
+    payload = response.payload.data.decode("UTF-8")
+
+    data = json.loads(payload)
+
+    return data
+
+def mlops_project_start(project_id, region, endpoint_id, endpoint_project_id, output_buk, opt, model_display_name, m_type, from_address, to_address, m_api_key):
     
     email_dict = {
         "file_upload" : {"status": None, "message": None},
         "dataset": {"status": None, "message": None},
         "training_job": {"status": None, "message": None},
         "model_deploy": {"status": None, "message": None},
-        "expose_endpoint": {"status": None, "message": None},
         "endpoint_url": {"status": None, "message": None}
     }
     
@@ -212,10 +248,10 @@ def hello_gcs1(project_id, region, endpoint_id, output_buk, opt, model_display_n
 
     latest_file_info = get_latest_dataset(bucket_name)
    
-    # if latest_file_info['file_name'] != None:
-    #     email_dict['file_upload']['status'] = "Successs"
-    #     email_dict['file_upload']['message'] = f"File uploaded to the bucket {output_buk} with the file name {latest_file_info['file_name']}"
-    #     mail_obj = email(from_address, to_address, m_api_key, email_dict)
+    if latest_file_info['file_name'] != None:
+        email_dict['file_upload']['status'] = "Successs"
+        email_dict['file_upload']['message'] = f"File uploaded to the bucket {output_buk} with the file name {latest_file_info['file_name']}"
+        mail_obj = email(from_address, to_address, m_api_key, email_dict)
  
     file_name = f"gs://{bucket_name}/{latest_file_info['file_name']}"
 
@@ -226,38 +262,55 @@ def hello_gcs1(project_id, region, endpoint_id, output_buk, opt, model_display_n
 
     print('Dataset ID: \t', dataset_id)
 
-    # if dataset_id != None:
-    #     email_dict['dataset']['status'] = "Success"
-    #     email_dict['dataset']['message'] = f"Dataset created successfully with the Dataset ID {dataset_id}"
-    #     mail_obj = email(from_address, to_address, m_api_key, email_dict)
+    if dataset_id != None:
+        email_dict['dataset']['status'] = "Success"
+        email_dict['dataset']['message'] = f"Dataset created successfully with the Dataset ID {dataset_id}"
+        mail_obj = email(from_address, to_address, m_api_key, email_dict)
  
     model, status = training_job("mlops-training-pipeline", "classification", dataset, "salary", True, "mlops-model-1")
 
-    print(model)
-    print(status)
+    if status == "successful":
+        email_dict['training_job']['status'] = "Successs"
+        email_dict['training_job']['message'] = f"Training Job completed successfully"
+        mail_obj = email(from_address, to_address, m_api_key, email_dict)
+    elif status == "error":
+        email_dict['training_job']['status'] = "Failure"
+        email_dict['training_job']['message'] = f"Training job failed, please check logs"
+        mail_obj = email(from_address, to_address, m_api_key, email_dict)
 
     endpoint = get_endpoint(endpoint_id)
 
-    deploy_status = endpoint.deploy(
-                                    model,
-                                    min_replica_count=1,
-                                    max_replica_count=1,
-                                    machine_type='n1-standard-2'
-                                )
+    try:
+        deploy_status = endpoint.deploy(
+                                        model,
+                                        min_replica_count=1,
+                                        max_replica_count=1,
+                                        machine_type='n1-standard-2'
+                                    )
+        email_dict['model_deploy']['status'] = "Successs"
+        email_dict['model_deploy']['message'] = f"Deployment completed successfully"
+        mail_obj = email(from_address, to_address, m_api_key, email_dict)
+    except Exception as e:
+        email_dict['model_deploy']['status'] = "Failure"
+        email_dict['model_deploy']['message'] = f"Deployment failed, please check logs {e}"
+        mail_obj = email(from_address, to_address, m_api_key, email_dict)
 
-    print(deploy_status)
+
+    try:
+        endpoint_url = get_exposing_url(endpoint_id, endpoint_project_id, region)
+        email_dict['endpoint_url']['status'] = "Successs"
+        email_dict['endpoint_url']['message'] = f"Endpoint URL: {endpoint_url}"
+        mail_obj = email(from_address, to_address, m_api_key, email_dict)
+    except Exception as e:
+        email_dict['endpoint_url']['status'] = "Failure"
+        email_dict['endpoint_url']['message'] = f"URL not available, please check logs {e}"
+        mail_obj = email(from_address, to_address, m_api_key, email_dict)
+ 
     
-    # if status == "successful":
-    #     email_dict['training_job']['status'] = "Successs"
-    #     email_dict['training_job']['message'] = f"Training Job completed successfully"
-    #     mail_obj = email(from_address, to_address, m_api_key, email_dict)
-    # elif status == "error":
-    #     email_dict['training_job']['status'] = "Failure"
-    #     email_dict['training_job']['message'] = f"Training job failed, please check logs"
-    #     mail_obj = email(from_address, to_address, m_api_key, email_dict)
 
 if __name__ == "__main__":
-    meta_data = load_meta_data()
+
+    meta_data = get_secret_values("demo_meta_data")
 
     project_id = meta_data.get('project_id')
     region = meta_data.get('region')
@@ -269,11 +322,9 @@ if __name__ == "__main__":
     from_email = meta_data.get('from_email')
     to_emails = meta_data.get('to_emails')
     mail_api_key = meta_data.get('mail_api_key')
- 
-    model_deployment_data = hello_gcs1(project_id, region, endpoint_id, output_buk, opt, model_display_name, m_type, from_email, to_emails, mail_api_key)
+    endpoint_project_id = meta_data.get('endpoint_project_id')
+
+    
+    
+    model_deployment_data = mlops_project_start(project_id, region, endpoint_id, endpoint_project_id, output_buk, opt, model_display_name, m_type, from_email, to_emails, mail_api_key)
     print('Model Deployment Data: \t', model_deployment_data)
-
-
-
-
-
