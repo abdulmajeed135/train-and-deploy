@@ -225,6 +225,7 @@ def hello_gcs1(project_id, region, endpoint_id, output_buk, opt, model_display_n
  
     model, status = training_job("mlops-training-pipeline", "classification", dataset, "salary", True, "mlops-model-1")
 
+    print(model)
     print(status)
     # if status == "successful":
     #     email_dict['training_job']['status'] = "Successs"
