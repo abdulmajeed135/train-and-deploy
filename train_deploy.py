@@ -185,6 +185,14 @@ def training_job(display_name, opt, dataset, target_column, des, model_name):
 
     return model
 
+def get_endpoint(endpoint_id):
+   endpoints = aiplatform.Endpoint.list() 
+   for i in range(0, len(endpoints)):
+     if endpoints[i].name == endpoint_id:
+        print(f"Endpoint ID: {endpoints[i].name}")
+        endpoint = aiplatform.Endpoint.list()[i]
+        return endpoint
+
 def hello_gcs1(project_id, region, endpoint_id, output_buk, opt, model_display_name, m_type, from_address, to_address, m_api_key):
     
     email_dict = {
@@ -227,6 +235,18 @@ def hello_gcs1(project_id, region, endpoint_id, output_buk, opt, model_display_n
 
     print(model)
     print(status)
+
+    endpoint = get_endpoint(endpoint_id)
+
+    deploy_status = endpoint.deploy(
+                                    model,
+                                    min_replica_count=1,
+                                    max_replica_count=1,
+                                    machine_type='n1-standard-2'
+                                )
+
+    print(deploy_status)
+    
     # if status == "successful":
     #     email_dict['training_job']['status'] = "Successs"
     #     email_dict['training_job']['message'] = f"Training Job completed successfully"
