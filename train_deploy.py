@@ -15,12 +15,16 @@ from python_http_client.exceptions import HTTPError
 
 client = secretmanager.SecretManagerServiceClient()
 credentials_file_path = "projects/tensile-nebula-406509/secrets/service_account_credentials/versions/latest"
-credentials_response = client.access_secret_version(request={"name": credentials_file_path})
-credentials_response = credentials_response.payload.data.decode("UTF-8")
+response = client.access_secret_version(request={"name": credentials_file_path})
+credentials = response.payload.data.decode("UTF-8")
+credentials = json.loads(credentials)
+credentials = json.dumps(credentials, indent=4)
 
-credentials = json.loads(credentials_response)
+with open("credentials_data.json", "w") as outfile:
+    outfile.write(credentials)
 
-os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials
+credentials_file = "credentials_data.json"
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials_file
 
 project_id = "tensile-nebula-406509"
 
