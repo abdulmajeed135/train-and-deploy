@@ -12,12 +12,14 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail, Email
 from python_http_client.exceptions import HTTPError
 
+
 client = secretmanager.SecretManagerServiceClient()
 credentials_file_path = "projects/tensile-nebula-406509/secrets/service_account_credentials/versions/latest"
-response = client.access_secret_version(request={"name": credentials_file_path})
-#credentials_file = response.payload.data.decode("UTF-8")
+credentials_response = client.access_secret_version(request={"name": credentials_file_path})
+credentials_response = credentials_response.payload.data.decode("UTF-8")
 
-credentials = response
+credentials = json.loads(credentials_response)
+
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = credentials
 
 project_id = "tensile-nebula-406509"
