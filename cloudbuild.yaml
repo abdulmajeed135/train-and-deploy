@@ -1,12 +1,12 @@
 steps:
-- name: "gcr.io/cloud-builders/docker"
-  args: ["build", "-t", "gcr.io/tensile-nebula-406509/vertex-ai:latest", "."]
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["build", "-t", "gcr.io/tensile-nebula-406509/vertex-ai:latest", "."]
 
-- name: "gcr.io/cloud-builders/docker"
-  args: ["push", "gcr.io/tensile-nebula-406509/vertex-ai:latest"]
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["push", "gcr.io/tensile-nebula-406509/vertex-ai:latest"]
 
-# - name: "gcr.io/cloud-builders/docker"
-#   args: ["run", "gcr.io/tensile-nebula-406509/vertex-ai:latest"]
+  - name: "gcr.io/cloud-builders/docker"
+    args: ["run", "gcr.io/tensile-nebula-406509/vertex-ai:latest"]
 
 timeout: 9000s
 

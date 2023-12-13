@@ -7,11 +7,15 @@ COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the app
+# Copy the dataflow py file
+COPY dataflow.py .
+
+# Copy the train deploy py file
 COPY train_deploy.py .
 
 # Copy the credentials.json
 COPY tensile-nebula-406509-8fd0cc70c363.json .
 
 # Run the train_deploy script
-CMD ["python", "train_deploy.py"]
+CMD ["python", "dataflow.py", "&&", "python", "train_deploy.py"]
+
