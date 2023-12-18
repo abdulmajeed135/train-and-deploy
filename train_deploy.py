@@ -265,7 +265,7 @@ def mlops_project_start(project_id, region, endpoint_id, endpoint_project_id, ou
         email_dict['dataset']['message'] = f"Dataset created successfully with the Dataset ID {dataset_id}"
         mail_obj = email(from_address, to_address, m_api_key, email_dict)
  
-    model, status = training_job("mlops-training-pipeline", "classification", dataset, "salary", True, "mlops-model-1")
+    model, status = training_job("mlops-training-pipeline", "classification", dataset, "Role", True, "mlops-model-1")
 
     if status == "successful":
         email_dict['training_job']['status'] = "Successs"

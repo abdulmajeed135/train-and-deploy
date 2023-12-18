@@ -67,7 +67,7 @@ def run():
     latest_file_info = get_latest_dataset("input_buk-1")
 
     input_csv_path = f"gs://input_buk-1/{latest_file_info['file_name']}"
-    output_csv_path = f"gs://output_buk/output/{latest_file_info['file_name']}"
+    output_csv_path = f"gs://output_buk/{latest_file_info['file_name']}"
 
     print(output_csv_path)
 
@@ -78,8 +78,6 @@ def run():
         region="us-central1",
         job_name="my-dataflow-job-1215",
         temp_location="gs://output_buk/temp_dir",
-        # setup_file="./setup.py",
-        # service_account_email="your-service-account@your-project.iam.gserviceaccount.com",
         service_account_file=credentials_path
     )
 
