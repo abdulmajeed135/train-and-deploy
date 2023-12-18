@@ -34,4 +34,4 @@ COPY train_deploy.py .
 COPY tensile-nebula-406509-8fd0cc70c363.json .
 
 # Run the train_deploy script
-CMD ["sh", "-c", "python dataflow.py"]
+CMD ["sh", "-c", "python train_deploy.py"]
