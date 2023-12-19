@@ -60,6 +60,10 @@ class CombineColumns(beam.DoFn):
         element = ','.join(element.values())
         yield element
 
+class TransformColumnNames(beam.DoFn):
+    def process(self, element):
+        element = element.lower()
+        yield element
 
 def run():
     credentials_path = "tensile-nebula-406509-8fd0cc70c363.json"
@@ -100,7 +104,9 @@ def run():
         
         combined_data = data | 'CombineColumns' >> beam.ParDo(CombineColumns())
         
-        combined_data | 'WriteToText' >> beam.io.WriteToText(output_csv_path, file_name_suffix=".csv")
+        transformed_data = combined_data | 'TransformColumnNames' >> beam.ParDo(TransformColumnNames())
+        
+        transformed_data | 'WriteToText' >> beam.io.WriteToText(output_csv_path, file_name_suffix=".csv")
 
 if __name__ == '__main__':
     run()
